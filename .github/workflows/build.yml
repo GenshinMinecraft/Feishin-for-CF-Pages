@@ -1,0 +1,35 @@
+name: Build Site
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0             
+      - name: Checkout submodules
+        run: git clone https://github.com/jeffvli/feishin.git
+      - name: Setup NodeJs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Deps
+        working-directory: ./feishin
+        run: npm install --legacy-peer-deps --ignore-scripts
+      - name: Build Site
+        working-directory: ./feishin
+        run: npm run build:web
+      - name: Copy Site
+        run: cp -afr ./feishin/release/app/dist/web ./static
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.PAT }}
