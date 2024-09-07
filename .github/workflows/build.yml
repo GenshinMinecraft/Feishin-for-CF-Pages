@@ -29,6 +29,8 @@ jobs:
         run: npm run build:web
       - name: Copy Site
         run: cp -afr ./feishin/release/app/dist/web ./static
+      - name: Del Feishin
+        run: rm -rf feishin
       - name: Commit & Push changes
         uses: actions-js/push@master
         with:
